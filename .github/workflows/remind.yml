@@ -1,0 +1,46 @@
+name: macro-alert-mail
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  send-reminders:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Send due reminders
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+          REMINDER_WINDOW_MINUTES: "20"
+          STATE_FILE: state/sent_reminders.json
+        run: |
+          python -m macro_alert.cli send
+
+      - name: Commit updated state
+        run: |
+          if git diff --quiet -- state/sent_reminders.json; then
+            echo "No reminder state changes."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add state/sent_reminders.json
+            git commit -m "chore: update reminder state"
+            git push
+          fi
