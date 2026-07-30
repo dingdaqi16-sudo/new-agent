@@ -28,7 +28,7 @@ jobs:
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           MAIL_FROM: ${{ secrets.MAIL_FROM }}
           MAIL_TO: ${{ secrets.MAIL_TO }}
-          REMINDER_WINDOW_MINUTES: "20"
+          REMINDER_WINDOW_MINUTES: "90"
           STATE_FILE: state/sent_reminders.json
         run: |
           python -m macro_alert.cli send
