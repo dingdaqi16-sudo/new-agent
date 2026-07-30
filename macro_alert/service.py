@@ -22,14 +22,14 @@ def build_reminders(event: EconomicEvent) -> List[Reminder]:
         (publish_at_beijing.date() - timedelta(days=1)),
         publish_at_beijing.replace(hour=12, minute=0, second=0, microsecond=0).time(),
     )
-    second_remind_utc = publish_at_utc - timedelta(hours=2)
+    second_remind_utc = publish_at_utc - timedelta(minutes=90)
     second_remind_beijing = to_beijing(second_remind_utc)
 
     first_subject = build_subject("前一天12点", event.title)
-    second_subject = build_subject("提前2小时", event.title)
+    second_subject = build_subject("提前90分钟", event.title)
 
     first_body = render_body(event, "前一天12:00", first_remind_beijing, first_remind_beijing.astimezone(UTC))
-    second_body = render_body(event, "提前2小时", second_remind_beijing, second_remind_utc)
+    second_body = render_body(event, "提前90分钟", second_remind_beijing, second_remind_utc)
 
     return [
         Reminder(
@@ -40,7 +40,7 @@ def build_reminders(event: EconomicEvent) -> List[Reminder]:
             remind_at_utc=first_remind_beijing.astimezone(UTC),
         ),
         Reminder(
-            kind="two_hours_before",
+            kind="ninety_minutes_before",
             event_key=event.event_key,
             subject=second_subject,
             body=second_body,

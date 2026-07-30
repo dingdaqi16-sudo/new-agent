@@ -26,7 +26,9 @@ class ServiceTests(unittest.TestCase):
         reminders = build_reminders(event)
         self.assertEqual(len(reminders), 2)
         self.assertEqual(reminders[0].remind_at_utc.astimezone(BEIJING).strftime("%Y-%m-%d %H:%M"), "2026-08-11 12:00")
-        self.assertEqual(reminders[1].remind_at_utc.astimezone(BEIJING).strftime("%Y-%m-%d %H:%M"), "2026-08-12 18:30")
+        self.assertEqual(reminders[0].kind, "day_before_noon")
+        self.assertEqual(reminders[1].remind_at_utc.astimezone(BEIJING).strftime("%Y-%m-%d %H:%M"), "2026-08-12 19:00")
+        self.assertEqual(reminders[1].kind, "ninety_minutes_before")
 
     def test_due_reminders_window(self) -> None:
         publish_at_et = datetime(2026, 8, 12, 8, 30, tzinfo=EASTERN)
