@@ -30,7 +30,7 @@
 - `macro_alert/`：核心代码
 - `tests/`：单元测试
 - `docs/iphone-setup.md`：iPhone 收通知教程
-- `.github/workflows/remind.yml`：GitHub Actions 定时任务
+- `.github/workflows/remind.yml`：GitHub Actions 手动测试工作流
 
 ## 本地预览
 
@@ -59,11 +59,16 @@ python3 -m macro_alert.cli send --dry-run
 
 QQ 邮箱要先开 `SMTP` 并使用授权码，不要直接填登录密码。
 
-## GitHub Actions
+## 稳定自动跑法
 
-把这个项目放到一个公开仓库里，GitHub Actions 的标准 GitHub-hosted runner 对公开仓库是免费的。
+推荐在你的 Mac 上装一个 `launchd` 定时任务，由它每 5 分钟执行一次提醒发送。
+这样不依赖 GitHub 的定时调度，QQ 邮件照样会进手机。
+Mac 需要保持登录并尽量别长时间关机或休眠。
 
-每 5 分钟跑一次，提醒窗口是 90 分钟。状态文件会自动更新并提交，避免重复提醒。
+安装脚本见 `scripts/install_launchd.sh`，说明见 `docs/macos-launchd.md`。
+
+GitHub Actions 现在只保留手动测试，不再作为自动调度入口。
+如果本机 `launchd` 已经装好，就别再手动点 GitHub 工作流，免得同一条提醒重复发。
 
 ## iPhone 收件
 
