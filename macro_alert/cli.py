@@ -8,23 +8,37 @@ from pathlib import Path
 from .service import preview, send_due_reminders, sync_events
 
 
+def env_str(name: str, default: str) -> str:
+    value = os.getenv(name)
+    if value is None or value.strip() == "":
+        return default
+    return value
+
+
+def env_int(name: str, default: int) -> int:
+    value = os.getenv(name)
+    if value is None or value.strip() == "":
+        return default
+    return int(value)
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="macro-alert")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     preview_parser = subparsers.add_parser("preview", help="Print the current event plan.")
-    preview_parser.add_argument("--window-minutes", type=int, default=int(os.getenv("REMINDER_WINDOW_MINUTES", "20")))
+    preview_parser.add_argument("--window-minutes", type=int, default=env_int("REMINDER_WINDOW_MINUTES", 20))
 
     send_parser = subparsers.add_parser("send", help="Send due reminders.")
-    send_parser.add_argument("--window-minutes", type=int, default=int(os.getenv("REMINDER_WINDOW_MINUTES", "20")))
-    send_parser.add_argument("--state-file", default=os.getenv("STATE_FILE", "state/sent_reminders.json"))
+    send_parser.add_argument("--window-minutes", type=int, default=env_int("REMINDER_WINDOW_MINUTES", 20))
+    send_parser.add_argument("--state-file", default=env_str("STATE_FILE", "state/sent_reminders.json"))
     send_parser.add_argument("--dry-run", action="store_true")
-    send_parser.add_argument("--smtp-host", default=os.getenv("SMTP_HOST", "smtp.qq.com"))
-    send_parser.add_argument("--smtp-port", type=int, default=int(os.getenv("SMTP_PORT", "465")))
-    send_parser.add_argument("--smtp-user", default=os.getenv("SMTP_USER", ""))
-    send_parser.add_argument("--smtp-password", default=os.getenv("SMTP_PASSWORD", ""))
-    send_parser.add_argument("--mail-from", default=os.getenv("MAIL_FROM", os.getenv("SMTP_USER", "")))
-    send_parser.add_argument("--mail-to", default=os.getenv("MAIL_TO", os.getenv("SMTP_USER", "")))
+    send_parser.add_argument("--smtp-host", default=env_str("SMTP_HOST", "smtp.qq.com"))
+    send_parser.add_argument("--smtp-port", type=int, default=env_int("SMTP_PORT", 465))
+    send_parser.add_argument("--smtp-user", default=env_str("SMTP_USER", ""))
+    send_parser.add_argument("--smtp-password", default=env_str("SMTP_PASSWORD", ""))
+    send_parser.add_argument("--mail-from", default=env_str("MAIL_FROM", env_str("SMTP_USER", "")))
+    send_parser.add_argument("--mail-to", default=env_str("MAIL_TO", env_str("SMTP_USER", "")))
 
     return parser
 
