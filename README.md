@@ -30,7 +30,10 @@
 - `macro_alert/`：核心代码
 - `tests/`：单元测试
 - `docs/iphone-setup.md`：iPhone 收通知教程
+- `docs/cron-job-org.md`：云端自动触发教程
+- `docs/macos-launchd.md`：本机备用方案
 - `.github/workflows/remind.yml`：GitHub Actions 手动测试工作流
+- `scripts/dispatch_workflow.sh`：本地触发 workflow 的测试脚本
 
 ## 本地预览
 
@@ -61,14 +64,12 @@ QQ 邮箱要先开 `SMTP` 并使用授权码，不要直接填登录密码。
 
 ## 稳定自动跑法
 
-推荐在你的 Mac 上装一个 `launchd` 定时任务，由它每 5 分钟执行一次提醒发送。
-这样不依赖 GitHub 的定时调度，QQ 邮件照样会进手机。
-Mac 需要保持登录并尽量别长时间关机或休眠。
+推荐用 `cron-job.org` 每 5 分钟触发一次 GitHub `workflow_dispatch`。
+这样就算你的 Mac 关机也能照样发，QQ 邮件会继续进手机。
 
-安装脚本见 `scripts/install_launchd.sh`，说明见 `docs/macos-launchd.md`。
+具体配置看 `docs/cron-job-org.md`，本地测试脚本是 `scripts/dispatch_workflow.sh`。
 
-GitHub Actions 现在只保留手动测试，不再作为自动调度入口。
-如果本机 `launchd` 已经装好，就别再手动点 GitHub 工作流，免得同一条提醒重复发。
+如果你想在自己电脑上跑，也保留了 `launchd` 备用方案，见 `docs/macos-launchd.md`。
 
 ## iPhone 收件
 
